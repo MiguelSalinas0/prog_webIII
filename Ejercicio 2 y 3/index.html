@@ -1,0 +1,45 @@
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <title>Ajax GET jQuery</title>
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+</head>
+
+<body>
+    <section>
+        <h3>Todos los usuarios</h3>
+        <button id="boton-usuarios">Obtener usuarios</button>
+        <div class="container">
+            <div id="lista-usuarios"></div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Un usuario</h3>
+        <div class="container">
+            <label for="nro-socio">Número de socio:</label>
+            <input type="number" id="nro-socio" />
+            <button id="boton-usuario">Obtener socio</button>
+            <div id="detalle-usuario"></div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Agregar un usuario</h3>
+        <form id="form-nuevo-usuario">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido" required>
+            <label for="avatar">URL del Avatar:</label>
+            <input type="url" id="avatar" name="avatar" required>
+            <button type="submit">Registrar Usuario</button>
+        </form>
+        <div id="respuesta-servidor"></div>
+    </section>
+
+    <script src="js/peticion.js"></script>
+</body>
+
+</html>
