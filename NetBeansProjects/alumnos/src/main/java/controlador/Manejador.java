@@ -5,106 +5,115 @@
 package controlador;
 
 import entidades.Alumno;
-import jakarta.annotation.Resource;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PersistenceUnit;
-import jakarta.persistence.Query;
-import jakarta.persistence.RollbackException;
+import entidades.Carrera;
+import entidades.MateriaHasAlumno;
+import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.HeuristicMixedException;
-import jakarta.transaction.HeuristicRollbackException;
-import jakarta.transaction.SystemException;
-import jakarta.transaction.UserTransaction;
 import jakarta.ws.rs.NotSupportedException;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sesiones.AlumnoFacade;
+import sesiones.CarreraFacade;
+import sesiones.MateriaFacade;
+import sesiones.MateriaHasAlumnoFacade;
 
 /**
  *
  * @author elias
  */
-
-@WebServlet(name = "Manejador", 
-            loadOnStartup = 1, //Para que el sevlet se  instancia e inicia cdo se depliega 
-            urlPatterns = {"/SolicitarDatos",
-                           "/AgregarAlumno",
-                           "/Listar"}
-            )
+@WebServlet(name = "Manejador",
+        loadOnStartup = 1, //Para que el sevlet se  instancia e inicia cdo se depliega 
+        urlPatterns = {"/SolicitarDatos",
+            "/AgregarAlumno",
+            "/Listar",
+            "/ListarCarreras",
+            "/ListarMaterias",
+            "/ListarAlumnosMaterias"}
+)
 
 public class Manejador extends HttpServlet {
-    
-    @PersistenceUnit 
-    private EntityManagerFactory emf;
-    @Resource
-    private UserTransaction utx;    
-    
+
+    @EJB
+    private AlumnoFacade alumnoF;
+    @EJB
+    private CarreraFacade carreraF;
+    @EJB
+    private MateriaFacade materiaF;
+    @EJB
+    private MateriaHasAlumnoFacade materiaAlumnoF;
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, jakarta.transaction.NotSupportedException, jakarta.transaction.RollbackException {
-            try {
-                //response.setContentType("text/html;charset=UTF-8");
-                String pathUsuario = request.getServletPath();
-                System.out.println("path = "+ pathUsuario);	    
-                String url = null;
-                EntityManager em = null;
-                switch (pathUsuario) {
-                    case "/SolicitarDatos":  
-                        url = "/WEB-INF/vista/" + pathUsuario + ".jsp";
-                        break;
-                    case "/AgregarAlumno":
-                        
-                        String registro= (String) request.getParameter("registro");
-                        String nombre  = (String) request.getParameter("nombre");
-                        String carrera  = (String) request.getParameter("carrera");
-                        
-                        Alumno a = new Alumno();
-                        a.setRegistro(Integer.parseInt(registro));
-                        a.setNombre(nombre);
-                        //a.setCarrera(carrera);
+        try {
+            //response.setContentType("text/html;charset=UTF-8");
+            String pathUsuario = request.getServletPath();
+            System.out.println("path = " + pathUsuario);
+            String url = null;
+            switch (pathUsuario) {
+                case "/SolicitarDatos":
 
-                        utx.begin();
-                            em = emf.createEntityManager();
-                            em.persist(a);
-                        utx.commit();
-                        
-                        url = "index.jsp";                      
-                        break;
-                    case "/Listar":
-                        em = emf.createEntityManager();
-                        Query q = em.createNamedQuery("Alumno.findAll");
-                        List todos = q.getResultList();
-                        request.setAttribute("lista",todos);
-                        url = "/WEB-INF/vista/" + pathUsuario + ".jsp";
-                        break;
-                }
-                
-                // usa RequestDispatcher para reTransmitir el requerimiento
-                try {
-                    request.getRequestDispatcher(url).forward(request, response);
-                } catch (ServletException | IOException ex) {
-                }
-                
-            } catch (NotSupportedException ex) {
+                    url = "/WEB-INF/vista/" + pathUsuario + ".jsp";
+                    break;
+
+                case "/AgregarAlumno":
+
+                    String registro = (String) request.getParameter("registro");
+                    String nombre = (String) request.getParameter("nombre");
+                    String carrera = (String) request.getParameter("carrera");
+
+                    Alumno a = new Alumno();
+                    a.setRegistro(Integer.valueOf(registro));
+                    a.setNombre(nombre);
+
+                    // buscar la carrera
+                    Carrera carreraEntidad = carreraF.find(Integer.valueOf(carrera));
+                    a.setCarreraIdcarrera(carreraEntidad);
+
+                    alumnoF.create(a);
+                    url = "index.jsp";
+                    break;
+
+                case "/Listar":
+
+                    request.setAttribute("lista", alumnoF.findAll());
+                    url = "/WEB-INF/vista/" + pathUsuario + ".jsp";
+                    break;
+
+                case "/ListarCarreras":
+
+                    request.setAttribute("carreras", carreraF.findAll());
+                    url = "/WEB-INF/vista/ListarCarreras.jsp";
+                    break;
+
+                case "/ListarMaterias":
+
+                    request.setAttribute("materias", materiaF.findAll());
+                    url = "/WEB-INF/vista/ListarMaterias.jsp";
+                    break;
+
+                case "/ListarAlumnosMaterias":
+                    List<MateriaHasAlumno> alumnosConMaterias = materiaAlumnoF.findAlumnosConMaterias();
+                    request.setAttribute("alumnosMaterias", alumnosConMaterias);
+                    url = "/WEB-INF/vista/ListarAlumnosMaterias.jsp";
+                    break;
+
+            }
+
+            // usa RequestDispatcher para reTransmitir el requerimiento
+            try {
+                request.getRequestDispatcher(url).forward(request, response);
+            } catch (ServletException | IOException ex) {
+            }
+
+        } catch (NotSupportedException ex) {
             Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SystemException ex) {
-            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RollbackException ex) {
-            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (HeuristicMixedException ex) {
-            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (HeuristicRollbackException ex) {
-            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalStateException ex) {
-            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
-        }	    
+        }
 
     }
 
@@ -122,9 +131,7 @@ public class Manejador extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (jakarta.transaction.NotSupportedException ex) {
-            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (jakarta.transaction.RollbackException ex) {
+        } catch (jakarta.transaction.NotSupportedException | jakarta.transaction.RollbackException ex) {
             Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -142,9 +149,7 @@ public class Manejador extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (jakarta.transaction.NotSupportedException ex) {
-            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (jakarta.transaction.RollbackException ex) {
+        } catch (jakarta.transaction.NotSupportedException | jakarta.transaction.RollbackException ex) {
             Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -158,5 +163,5 @@ public class Manejador extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
+
 }

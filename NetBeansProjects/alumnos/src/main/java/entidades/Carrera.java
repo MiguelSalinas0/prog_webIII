@@ -36,15 +36,16 @@ import java.util.Collection;
     @NamedQuery(name = "Carrera.findByNombre", query = "SELECT c FROM Carrera c WHERE c.nombre = :nombre")})
 public class Carrera implements Serializable {
 
+    @Size(max = 45)
+    @Column(name = "nombre", length = 45)
+    private String nombre;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idcarrera", nullable = false)
     private Integer idcarrera;
-    @Size(max = 45)
-    @Column(name = "nombre", length = 45)
-    private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "carreraIdcarrera")
     private Collection<Alumno> alumnoCollection;
     @JoinColumn(name = "facultad_idfacultad", referencedColumnName = "idfacultad", nullable = false)
@@ -66,13 +67,6 @@ public class Carrera implements Serializable {
         this.idcarrera = idcarrera;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 
     @XmlTransient
     public Collection<Alumno> getAlumnoCollection() {
@@ -114,6 +108,14 @@ public class Carrera implements Serializable {
     @Override
     public String toString() {
         return "entidades.Carrera[ idcarrera=" + idcarrera + " ]";
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
     
 }

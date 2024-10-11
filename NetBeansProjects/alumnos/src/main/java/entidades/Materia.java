@@ -33,15 +33,16 @@ import java.util.Collection;
     @NamedQuery(name = "Materia.findByNombre", query = "SELECT m FROM Materia m WHERE m.nombre = :nombre")})
 public class Materia implements Serializable {
 
+    @Size(max = 45)
+    @Column(name = "nombre", length = 45)
+    private String nombre;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "idmateria", nullable = false)
     private Integer idmateria;
-    @Size(max = 45)
-    @Column(name = "nombre", length = 45)
-    private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
     private Collection<MateriaHasAlumno> materiaHasAlumnoCollection;
 
@@ -60,13 +61,6 @@ public class Materia implements Serializable {
         this.idmateria = idmateria;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 
     @XmlTransient
     public Collection<MateriaHasAlumno> getMateriaHasAlumnoCollection() {
@@ -100,6 +94,14 @@ public class Materia implements Serializable {
     @Override
     public String toString() {
         return "entidades.Materia[ idmateria=" + idmateria + " ]";
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
     
 }

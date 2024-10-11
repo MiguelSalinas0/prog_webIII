@@ -37,15 +37,16 @@ import java.util.Collection;
     @NamedQuery(name = "Alumno.findByRegistro", query = "SELECT a FROM Alumno a WHERE a.registro = :registro")})
 public class Alumno implements Serializable {
 
+    @Size(max = 45)
+    @Column(name = "nombre", length = 45)
+    private String nombre;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idalumno", nullable = false)
     private Integer idalumno;
-    @Size(max = 45)
-    @Column(name = "nombre", length = 45)
-    private String nombre;
     @Column(name = "registro")
     private Integer registro;
     @JoinColumn(name = "carrera_idcarrera", referencedColumnName = "idcarrera", nullable = false)
@@ -67,14 +68,6 @@ public class Alumno implements Serializable {
 
     public void setIdalumno(Integer idalumno) {
         this.idalumno = idalumno;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
     public Integer getRegistro() {
@@ -125,6 +118,14 @@ public class Alumno implements Serializable {
     @Override
     public String toString() {
         return "entidades.Alumno[ idalumno=" + idalumno + " ]";
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
     
 }
