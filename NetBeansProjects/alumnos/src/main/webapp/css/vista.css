@@ -1,0 +1,126 @@
+*{
+    margin         : 0 auto; /* si queremos centrarlo. Si no sacar auto */
+    padding        : 0;
+    border         : 0;
+    outline        : 0;
+    vertical-align : baseline;
+    background     : transparent;
+ }
+
+h1 {
+    margin: 0px;
+    text-align: center; 
+	line-height: 1.6em;
+}
+.cabeza {
+	width: 980px;
+	min-height: 100%;
+	position: relative;
+	margin: 0px auto;
+
+}
+
+.font_0 {
+    font: bold 28px/1.4em din-next-w01-light,din-next-w02-light,din-next-w10-light,sans-serif;}
+	
+a {
+    cursor          : pointer;
+    text-decoration : none;
+}
+
+	/* Menu Principal */ 
+.menu  {
+    border-radius: 5px;
+    list-style-type: none;
+    margin: 0 auto; /* si queremos centrarlo */
+    padding: 0;
+    /* la altura y su ancho dependerán de los textos */
+    height: 40px; 
+    width: 510px;
+    
+  }
+  
+  		
+
+  /* si es necesario, evitamos que Blogger de problemas con los saltos de línea cuando escribimos el HTML */
+/*.menu  br { display:none; }
+
+  /* cada item del menu */
+  
+ul, ol {
+	list-style:none;
+}
+  
+.menu > li {
+    float: left; /* la lista se ve horizontal */
+  }
+.menu li a {
+    font: 16px/1.4em "courier new",courier-ps-w01,courier-ps-w02,courier-ps-w10,monospace;
+	color: #000;
+	padding: 8px;
+    line-height: 28px;
+    padding: 0 14px;
+    margin: 6px 0;
+    text-decoration: none;
+	border-top-width: 4px; 
+	border-style: solid;
+	border-top-color: white;
+	display: block;
+  }
+
+.menu li:hover > a { color: #3633B7; /*green; color de la opcion elegida*/
+				  border-top-color: #FC8B0B; /*rgba(13, 174, 13, 0.75); color de la linea*/
+}
+
+  /* los submenús */
+.menu ul {
+    /*left: 0;*/
+    margin: 0;
+    opacity: 0; /* no son visibles */
+    position: absolute;
+	min-width:140px;
+    top: 50px; /* se ubican debajo del enlace principal */
+    /* el color de fondo */
+	background-color:  white; /*transparent;*/
+	text-align: center;
+  }
+  /* son visibes al poner el cursor encima */
+.menu li:hover > ul { opacity:1;
+	 /*border: 1px solid black;   */
+	 }
+
+   /* cada un ode los items de los submenús */
+.menu ul li {
+   /* height: 0; /* no son visibles */
+    overflow: hidden;
+    padding: 0;
+	position:relative;
+  }
+  
+.menu li:hover > ul li{
+    /*height: 36px; /* los mostramos */
+    overflow: visible;
+    padding: 0;
+	
+  }
+			
+.menu li ul li ul {
+	right:-140px;
+	top:0px;
+}
+.opcion {
+	color: #000; /* color: #4FD4C7; */
+	display: inline-block;
+	padding-top: 5px;
+	padding: 8px;
+	text-align: center;
+}
+.subopcion {
+	color: #4FD4C7;
+/*	display: inline-block;
+	padding-top: 5px;
+	padding: 8px;
+	text-align: center;*/
+}
+/* Estos son ejemplos */
+/* http://vagabundia.blogspot.com/2012/05/simple-menu-desplegable-con-css.html */
