@@ -32,7 +32,7 @@
                 </h1>
             </div>
 
-            <div style="left: 700px; width: 60px; position: absolute; top: 275px; height: 20px;">
+            <div style="left: 1000px; width: 60px; position: absolute; top: 275px; height: 20px;">
 
                 <div style="position:absolute; width:100%; height:100%;">
                     <div style="width:20px; height:20px; margin-bottom:0; margin-right:8px; display:inline-block;">
@@ -72,7 +72,7 @@
                     <li><a href="">Docentes</a></li>
                     <li><a href="">Alumnos</a>
                         <ul>
-                            <li><a href="SolicitarDatos">Agregar</a></li>
+                            <li><a href="SolicitarDatosAlumno">Solicitar Datos Alumno</a></li>
                             <li><a href="Listar">Listar</a></li>
                         </ul>
                     </li>
@@ -86,8 +86,17 @@
                             <li><a href="ListarAlumnosMaterias">Listar Alumnos con Materias</a></li>
                         </ul>
                     </li>
-                </ul>
 
+                    <!-- Nuevo menú de Solicitar Datos -->
+                    <li><a href="#">Solicitar Datos</a>
+                        <ul>
+                            <li><a href="SolicitarDatosAlumno">Solicitar Datos Alumno</a></li>
+                            <li><a href="SolicitarDatosMateria">Solicitar Datos Materia</a></li>
+                            <li><a href="SolicitarDatosCarrera">Solicitar Datos Carrera</a></li>
+                            <li><a href="SolicitarDatosFacultad">Solicitar Datos Facultad</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
 
         </div>
