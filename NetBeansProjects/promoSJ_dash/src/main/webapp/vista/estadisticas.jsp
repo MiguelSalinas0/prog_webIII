@@ -1,24 +1,21 @@
 <%-- 
-    Document   : home
-    Created on : 12 oct 2024, 12:47:11
+    Document   : estadisticas
+    Created on : 13 oct 2024, 17:16:28
     Author     : elias
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
 <!DOCTYPE html>
-<html lang="es">
+<html>
     <head>
-        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel="stylesheet" href="css/style.css"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Dashboard - Comercio</title>
+        <title>Estadísticas</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
-
         <div class="container-fluid">
             <div class="row">
                 <!-- Sidebar -->
@@ -28,6 +25,8 @@
                 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                     <div class="welcome-header mb-3">
                         <h1 class="h2">Bienvenido, ${comercio.nombre}</h1>
+                        <br>
+                        <h3>Estadísticas</h3>
                     </div>
 
                 </main>

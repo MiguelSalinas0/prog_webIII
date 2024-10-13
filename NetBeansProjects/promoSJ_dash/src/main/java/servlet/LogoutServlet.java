@@ -4,26 +4,19 @@
  */
 package servlet;
 
-import entidades.Comercios;
-import jakarta.ejb.EJB;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import sesiones.ComerciosFacade;
 
 /**
  *
  * @author elias
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
-public class LoginServlet extends HttpServlet {
-
-    @EJB
-    private ComerciosFacade comercioF;
+@WebServlet(name = "LogoutServlet", urlPatterns = {"/LogoutServlet"})
+public class LogoutServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,25 +30,7 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        if (request.getMethod().equalsIgnoreCase("POST")) {
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
-
-            Comercios comercio = comercioF.login(email, password);
-
-            if (comercio != null) {
-                // Almacenar el comercio en la sesión
-                HttpSession session = request.getSession();
-                session.setAttribute("comercio", comercio);
-
-                request.getRequestDispatcher("vista/home.jsp").forward(request, response);
-            } else {
-                // Si las credenciales no son correctas
-                System.out.println("Email o contraseña incorrectos");
-                request.setAttribute("errorMessage", "Email o contraseña incorrectos");
-                request.getRequestDispatcher("vista/login.jsp").forward(request, response);
-            }
-        }
+        request.getRequestDispatcher("vista/login.jsp").forward(request, response);
 
     }
 
