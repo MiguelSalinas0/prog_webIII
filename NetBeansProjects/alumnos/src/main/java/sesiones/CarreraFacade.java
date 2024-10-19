@@ -5,9 +5,12 @@
 package sesiones;
 
 import entidades.Carrera;
+import entidades.Facultad;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import java.util.List;
 
 /**
  *
@@ -26,6 +29,14 @@ public class CarreraFacade extends AbstractFacade<Carrera> {
 
     public CarreraFacade() {
         super(Carrera.class);
+    }
+    
+    // Método para obtener todas las carreras según la facultad
+    public List<Carrera> findCarrerasByFacultad(Facultad facultad) {
+        TypedQuery<Carrera> query = em.createQuery(
+            "SELECT c FROM Carrera c WHERE c.facultadIdfacultad = :facultad", Carrera.class);
+        query.setParameter("facultad", facultad);
+        return query.getResultList();
     }
     
 }

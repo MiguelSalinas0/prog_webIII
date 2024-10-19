@@ -6,6 +6,7 @@ package controlador;
 
 import entidades.Alumno;
 import entidades.Carrera;
+import entidades.Docente;
 import entidades.Facultad;
 import entidades.Materia;
 import entidades.MateriaHasAlumno;
@@ -22,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import sesiones.AlumnoFacade;
 import sesiones.CarreraFacade;
+import sesiones.DocenteFacade;
 import sesiones.FacultadFacade;
 import sesiones.MateriaFacade;
 import sesiones.MateriaHasAlumnoFacade;
@@ -33,6 +35,8 @@ import sesiones.MateriaHasAlumnoFacade;
 @WebServlet(name = "Manejador",
         loadOnStartup = 1, //Para que el sevlet se  instancia e inicia cdo se depliega 
         urlPatterns = {
+            "/Docente",
+            "/Facultad",
             "/SolicitarDatosAlumno",
             "/AgregarAlumno",
             "/Listar",
@@ -61,6 +65,17 @@ public class Manejador extends HttpServlet {
     private FacultadFacade facultadF;
     @EJB
     private MateriaHasAlumnoFacade materiaAlumnoF;
+    @EJB
+    private DocenteFacade docenteF;
+
+    @Override
+    public void init() throws ServletException {
+        // Almacena la lista de facultades en el contexto del Servlet
+        getServletContext().setAttribute("facultades", facultadF.findAll());
+        // Almacena la lista de docentes en el contexto del Servlet
+        getServletContext().setAttribute("docentes", docenteF.findAll());
+
+    }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, jakarta.transaction.NotSupportedException, jakarta.transaction.RollbackException {
@@ -70,9 +85,26 @@ public class Manejador extends HttpServlet {
             System.out.println("path = " + pathUsuario);
             String url = null;
             switch (pathUsuario) {
+                
+                case "/Docente":
+                    
+                    Integer nroDocente = Integer.valueOf(request.getParameter("codigoDocen"));
+                    request.setAttribute("alumnos", docenteF.findAlumnosByDocente(nroDocente));
+                    url = "/WEB-INF/vista/ListarAlumnosDocente.jsp";
+                    break;
+
+                case "/Facultad":
+                    
+                    Integer nroFacultad = Integer.valueOf(request.getParameter("codigoFacu"));
+                    Facultad miFacu = facultadF.find(nroFacultad);
+                    getServletContext().setAttribute("facultad", miFacu);
+                    request.setAttribute("carreras", carreraF.findCarrerasByFacultad(miFacu));
+                    url = "/WEB-INF/vista/ListarCarreras.jsp";
+                    break;
 
                 case "/SolicitarDatosAlumno":
 
+                    request.setAttribute("carreras", carreraF.findAll());
                     url = "/WEB-INF/vista/" + pathUsuario + ".jsp";
                     break;
 
