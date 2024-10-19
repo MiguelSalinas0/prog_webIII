@@ -96,6 +96,9 @@
                             <li><a href="SolicitarDatosFacultad">Solicitar Datos Facultad</a></li>
                         </ul>
                     </li>
+                    <li>
+                        <a href="SolicitarDatos">AlumnoMateria</a>
+                    </li>
                 </ul>
             </div>
 

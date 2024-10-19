@@ -29,15 +29,24 @@ public class MateriaHasAlumnoFacade extends AbstractFacade<MateriaHasAlumno> {
     public MateriaHasAlumnoFacade() {
         super(MateriaHasAlumno.class);
     }
-    
+
     // Método para obtener la lista de alumnos con sus materias
     public List<MateriaHasAlumno> findAlumnosConMaterias() {
         // Consulta para obtener la relación entre alumno y materia
         TypedQuery<MateriaHasAlumno> query = em.createQuery(
-            "SELECT m FROM MateriaHasAlumno m JOIN FETCH m.alumno a JOIN FETCH m.materia", 
-            MateriaHasAlumno.class
+                "SELECT m FROM MateriaHasAlumno m JOIN FETCH m.alumno a JOIN FETCH m.materia",
+                MateriaHasAlumno.class
         );
         return query.getResultList();
     }
-    
+
+    public List<MateriaHasAlumno> findMateriasByRegistro(int registro) {
+        TypedQuery<MateriaHasAlumno> query = em.createQuery(
+                "SELECT m FROM MateriaHasAlumno m JOIN FETCH m.alumno a JOIN FETCH m.materia WHERE a.registro = :registro",
+                MateriaHasAlumno.class
+        );
+        query.setParameter("registro", registro);
+        return query.getResultList();
+    }
+
 }

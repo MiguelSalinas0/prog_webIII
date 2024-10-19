@@ -44,12 +44,13 @@ import sesiones.MateriaHasAlumnoFacade;
             "/SolicitarDatosMateria",
             "/RegistrarMateria",
             "/SolicitarDatosFacultad",
-            "/RegistrarFacultad"
+            "/RegistrarFacultad",
+            "/SolicitarDatos"
         }
 )
 
 public class Manejador extends HttpServlet {
-    
+
     @EJB
     private AlumnoFacade alumnoF;
     @EJB
@@ -60,7 +61,7 @@ public class Manejador extends HttpServlet {
     private FacultadFacade facultadF;
     @EJB
     private MateriaHasAlumnoFacade materiaAlumnoF;
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, jakarta.transaction.NotSupportedException, jakarta.transaction.RollbackException {
         try {
@@ -69,18 +70,18 @@ public class Manejador extends HttpServlet {
             System.out.println("path = " + pathUsuario);
             String url = null;
             switch (pathUsuario) {
-                
+
                 case "/SolicitarDatosAlumno":
-                    
+
                     url = "/WEB-INF/vista/" + pathUsuario + ".jsp";
                     break;
-                
+
                 case "/AgregarAlumno":
-                    
+
                     String registro = (String) request.getParameter("registro");
                     String nombre = (String) request.getParameter("nombre");
                     String carrera = (String) request.getParameter("carrera");
-                    
+
                     Alumno a = new Alumno();
                     a.setRegistro(Integer.valueOf(registro));
                     a.setNombre(nombre);
@@ -88,85 +89,109 @@ public class Manejador extends HttpServlet {
                     // buscar la carrera
                     Carrera carreraEntidad = carreraF.find(Integer.valueOf(carrera));
                     a.setCarreraIdcarrera(carreraEntidad);
-                    
+
                     alumnoF.create(a);
                     url = "index.jsp";
                     break;
-                
+
                 case "/Listar":
-                    
+
                     request.setAttribute("lista", alumnoF.findAll());
                     url = "/WEB-INF/vista/" + pathUsuario + ".jsp";
                     break;
-                
+
                 case "/ListarCarreras":
-                    
+
                     request.setAttribute("carreras", carreraF.findAll());
                     url = "/WEB-INF/vista/ListarCarreras.jsp";
                     break;
-                
+
                 case "/ListarMaterias":
-                    
+
                     request.setAttribute("materias", materiaF.findAll());
                     url = "/WEB-INF/vista/ListarMaterias.jsp";
                     break;
-                
+
                 case "/ListarAlumnosMaterias":
-                    
+
                     List<MateriaHasAlumno> alumnosConMaterias = materiaAlumnoF.findAlumnosConMaterias();
                     request.setAttribute("alumnosMaterias", alumnosConMaterias);
                     url = "/WEB-INF/vista/ListarAlumnosMaterias.jsp";
                     break;
-                
+
                 case "/SolicitarDatosCarrera":
-                    
+
                     request.setAttribute("listaFacultades", facultadF.findAll());
                     url = "/WEB-INF/vista/" + pathUsuario + ".jsp";
                     break;
-                
+
                 case "/RegistrarCarrera":
-                    
+
                     String nombreC = (String) request.getParameter("nombre");
                     String facultadId = request.getParameter("facultad");
-                    
+
                     Facultad fac = facultadF.find(Integer.valueOf(facultadId));
                     Carrera c = new Carrera();
-                    
+
                     c.setNombre(nombreC);
                     c.setFacultadIdfacultad(fac);
-                    
+
                     carreraF.create(c);
                     url = "index.jsp";
                     break;
-                
+
                 case "/SolicitarDatosMateria":
-                    
+
                     url = "/WEB-INF/vista/" + pathUsuario + ".jsp";
                     break;
-                
+
                 case "/RegistrarMateria":
-                    
+
                     String nombreM = (String) request.getParameter("nombre");
                     Materia m = new Materia();
                     m.setNombre(nombreM);
                     materiaF.create(m);
                     url = "index.jsp";
                     break;
-                
+
                 case "/SolicitarDatosFacultad":
-                    
+
                     url = "/WEB-INF/vista/" + pathUsuario + ".jsp";
                     break;
-                
+
                 case "/RegistrarFacultad":
-                    
+
                     String nombreF = (String) request.getParameter("nombre");
                     Facultad f = new Facultad();
                     f.setNombre(nombreF);
                     facultadF.create(f);
                     url = "index.jsp";
                     break;
-                
+
+                case "/SolicitarDatos":
+                    String numeroRegistro = request.getParameter("numeroRegistro");
+
+                    if (numeroRegistro != null && !numeroRegistro.trim().isEmpty()) {
+                        try {
+                            int numeroRegistroInt = Integer.parseInt(numeroRegistro);
+
+                            List<MateriaHasAlumno> materiasAlumno = materiaAlumnoF.findMateriasByRegistro(numeroRegistroInt);
+
+                            if (materiasAlumno != null && !materiasAlumno.isEmpty()) {
+                                request.setAttribute("materias", materiasAlumno);
+                            } else {
+                                request.setAttribute("error", "No se encontró ningún alumno con ese número de registro.");
+                            }
+                        } catch (NumberFormatException e) {
+                            request.setAttribute("error", "El número de registro debe ser un valor numérico válido.");
+                        }
+                    } else {
+                        request.setAttribute("error", "Debe proporcionar un número de registro.");
+                    }
+
+                    url = "/WEB-INF/vista/SolicitarDatos.jsp";
+                    break;
+
             }
 
             // usa RequestDispatcher para reTransmitir el requerimiento
@@ -174,11 +199,11 @@ public class Manejador extends HttpServlet {
                 request.getRequestDispatcher(url).forward(request, response);
             } catch (ServletException | IOException ex) {
             }
-            
+
         } catch (NotSupportedException ex) {
             Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

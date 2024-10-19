@@ -48,85 +48,55 @@ public class Ruteo extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //response.setContentType("text/html;charset=UTF-8");
+
         String pathUsuario = request.getServletPath();
-        String url = null;
+        String url;
         HttpSession session = request.getSession(false);
-        Comercios comercio = (Comercios) session.getAttribute("comercio");
+        Comercios comercio = (Comercios) (session != null ? session.getAttribute("comercio") : null);
+
+        // Verifica la sesión y el comercio al principio
+        if (session == null || comercio == null) {
+            request.getRequestDispatcher("vista/login.jsp").forward(request, response);
+            return;
+        }
+
         switch (pathUsuario) {
 
             case "/Home":
-
-                if (session != null) {
-                    if (comercio != null) {
-                        request.setAttribute("comercio", comercio);
-                        url = "vista/home.jsp";
-                    } else {
-                        request.getRequestDispatcher("vista/login.jsp").forward(request, response);
-                        return;
-                    }
-                } else {
-                    request.getRequestDispatcher("vista/login.jsp").forward(request, response);
-                    return;
-                }
+                request.setAttribute("comercio", comercio);
+                url = "vista/home.jsp";
                 break;
 
             case "/Perfil":
-
-                if (session != null) {
-                    if (comercio != null) {
-                        request.setAttribute("comercio", comercio);
-                        url = "vista/perfil.jsp";
-                    } else {
-                        request.getRequestDispatcher("vista/login.jsp").forward(request, response);
-                        return;
-                    }
-                } else {
-                    request.getRequestDispatcher("vista/login.jsp").forward(request, response);
-                    return;
-                }
+                request.setAttribute("comercio", comercio);
+                url = "vista/perfil.jsp";
                 break;
 
             case "/Promociones":
-
-                if (session != null) {
-                    if (comercio != null) {
-                        // Consultar las promociones asociadas al comercio
-                        List<Promociones> promociones = promocionF.findPromocionesByComercio(comercio.getIdComercio());
-                        request.setAttribute("promociones", promociones);
-                        url = "/vista/promociones.jsp";
-                    } else {
-                        request.getRequestDispatcher("vista/login.jsp").forward(request, response);
-                        return;
-                    }
-                } else {
-                    request.getRequestDispatcher("vista/login.jsp").forward(request, response);
-                    return;
-                }
+                // Consultar las promociones asociadas al comercio
+                List<Promociones> promociones = promocionF.findPromocionesByComercio(comercio.getIdComercio());
+                request.setAttribute("promociones", promociones);
+                url = "/vista/promociones.jsp";
                 break;
 
             case "/Estadisticas":
+                request.setAttribute("comercio", comercio);
+                url = "vista/estadisticas.jsp";
+                break;
 
-                if (session != null) {
-                    if (comercio != null) {
-                        request.setAttribute("comercio", comercio);
-                        url = "vista/estadisticas.jsp";
-                    } else {
-                        request.getRequestDispatcher("vista/login.jsp").forward(request, response);
-                        return;
-                    }
-                } else {
-                    request.getRequestDispatcher("vista/login.jsp").forward(request, response);
-                    return;
-                }
+            default:
+                // Maneja una ruta no esperada
+                url = "vista/error.jsp"; // O alguna página de error personalizada
                 break;
 
         }
-        // usa RequestDispatcher para reTransmitir el requerimiento
-        try {
-            request.getRequestDispatcher(url).forward(request, response);
-        } catch (ServletException | IOException ex) {
-            Logger.getLogger(Ruteo.class.getName()).log(Level.SEVERE, null, ex);
+        // Transmite el requerimiento
+        if (url != null) {
+            try {
+                request.getRequestDispatcher(url).forward(request, response);
+            } catch (ServletException | IOException ex) {
+                Logger.getLogger(Ruteo.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
