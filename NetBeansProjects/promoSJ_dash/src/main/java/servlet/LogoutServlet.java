@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -30,6 +31,15 @@ public class LogoutServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Obtener la sesión actual
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            // Invalidar la sesión para eliminar los datos de sesión
+            session.invalidate();
+        }
+
+        // Redirigir a la página de login
         request.getRequestDispatcher("vista/login.jsp").forward(request, response);
 
     }

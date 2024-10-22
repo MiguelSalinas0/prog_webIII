@@ -44,12 +44,6 @@ import java.util.Date;
     @NamedQuery(name = "Promociones.findByEstado", query = "SELECT p FROM Promociones p WHERE p.estado = :estado")})
 public class Promociones implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_promocion", nullable = false)
-    private Integer idPromocion;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -61,18 +55,25 @@ public class Promociones implements Serializable {
     @Size(min = 1, max = 65535)
     @Column(name = "descripcion", nullable = false, length = 65535)
     private String descripcion;
-    @Column(name = "fecha_inicio")
-    @Temporal(TemporalType.DATE)
-    private Date fechaInicio;
-    @Column(name = "fecha_fin")
-    @Temporal(TemporalType.DATE)
-    private Date fechaFin;
     @Size(max = 255)
     @Column(name = "imagen", length = 255)
     private String imagen;
     @Size(max = 20)
     @Column(name = "estado", length = 20)
     private String estado;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_promocion", nullable = false)
+    private Integer idPromocion;
+    @Column(name = "fecha_inicio")
+    @Temporal(TemporalType.DATE)
+    private Date fechaInicio;
+    @Column(name = "fecha_fin")
+    @Temporal(TemporalType.DATE)
+    private Date fechaFin;
     @OneToMany(mappedBy = "idPromocion")
     private Collection<Canjes> canjesCollection;
     @OneToMany(mappedBy = "idPromocion")
@@ -102,21 +103,6 @@ public class Promociones implements Serializable {
         this.idPromocion = idPromocion;
     }
 
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 
     public Date getFechaInicio() {
         return fechaInicio;
@@ -134,21 +120,6 @@ public class Promociones implements Serializable {
         this.fechaFin = fechaFin;
     }
 
-    public String getImagen() {
-        return imagen;
-    }
-
-    public void setImagen(String imagen) {
-        this.imagen = imagen;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
 
     @XmlTransient
     public Collection<Canjes> getCanjesCollection() {
@@ -199,6 +170,38 @@ public class Promociones implements Serializable {
     @Override
     public String toString() {
         return "entidades.Promociones[ idPromocion=" + idPromocion + " ]";
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
     
 }

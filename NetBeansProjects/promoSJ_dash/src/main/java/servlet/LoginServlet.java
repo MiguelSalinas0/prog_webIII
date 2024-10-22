@@ -49,6 +49,7 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("comercio", comercio);
 
                 request.getRequestDispatcher("vista/home.jsp").forward(request, response);
+                
             } else {
                 // Si las credenciales no son correctas
                 System.out.println("Email o contraseña incorrectos");

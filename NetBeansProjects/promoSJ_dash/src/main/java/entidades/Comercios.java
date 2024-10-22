@@ -47,19 +47,13 @@ import java.util.Date;
     @NamedQuery(name = "Comercios.findByFechaRegistro", query = "SELECT c FROM Comercios c WHERE c.fechaRegistro = :fechaRegistro")})
 public class Comercios implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_comercio", nullable = false)
-    private Integer idComercio;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Size(min = 1, max = 200)
     @Column(name = "direccion", nullable = false, length = 200)
     private String direccion;
@@ -75,7 +69,8 @@ public class Comercios implements Serializable {
     @Size(max = 255)
     @Column(name = "logo", length = 255)
     private String logo;
-    @Lob
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Lob()
     @Size(max = 65535)
     @Column(name = "descripcion", length = 65535)
     private String descripcion;
@@ -83,15 +78,21 @@ public class Comercios implements Serializable {
     @Column(name = "horarios", length = 255)
     private String horarios;
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Size(min = 1, max = 100)
     @Column(name = "password", nullable = false, length = 100)
     private String password;
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Column(name = "fecha_registro", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_comercio", nullable = false)
+    private Integer idComercio;
     @OneToMany(mappedBy = "idComercio")
     private Collection<Promociones> promocionesCollection;
 
@@ -117,6 +118,49 @@ public class Comercios implements Serializable {
 
     public void setIdComercio(Integer idComercio) {
         this.idComercio = idComercio;
+    }
+
+
+    public Date getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(Date fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
+    }
+
+    @XmlTransient
+    public Collection<Promociones> getPromocionesCollection() {
+        return promocionesCollection;
+    }
+
+    public void setPromocionesCollection(Collection<Promociones> promocionesCollection) {
+        this.promocionesCollection = promocionesCollection;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (idComercio != null ? idComercio.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Comercios)) {
+            return false;
+        }
+        Comercios other = (Comercios) object;
+        if ((this.idComercio == null && other.idComercio != null) || (this.idComercio != null && !this.idComercio.equals(other.idComercio))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "entidades.Comercios[ idComercio=" + idComercio + " ]";
     }
 
     public String getNombre() {
@@ -181,48 +225,6 @@ public class Comercios implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Date getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public void setFechaRegistro(Date fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
-
-    @XmlTransient
-    public Collection<Promociones> getPromocionesCollection() {
-        return promocionesCollection;
-    }
-
-    public void setPromocionesCollection(Collection<Promociones> promocionesCollection) {
-        this.promocionesCollection = promocionesCollection;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (idComercio != null ? idComercio.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Comercios)) {
-            return false;
-        }
-        Comercios other = (Comercios) object;
-        if ((this.idComercio == null && other.idComercio != null) || (this.idComercio != null && !this.idComercio.equals(other.idComercio))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entidades.Comercios[ idComercio=" + idComercio + " ]";
     }
     
 }
