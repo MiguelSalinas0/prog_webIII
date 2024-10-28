@@ -23,6 +23,18 @@
         <servlet-name>ActualizarPerfilServlet</servlet-name>
         <servlet-class>servlet.ActualizarPerfilServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EliminarPromocionServlet</servlet-name>
+        <servlet-class>servlet.EliminarPromocionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditarPromocionServlet</servlet-name>
+        <servlet-class>servlet.EditarPromocionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CrearPromocionServlet</servlet-name>
+        <servlet-class>servlet.CrearPromocionServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -42,6 +54,18 @@
     <servlet-mapping>
         <servlet-name>ActualizarPerfilServlet</servlet-name>
         <url-pattern>/ActualizarPerfilServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EliminarPromocionServlet</servlet-name>
+        <url-pattern>/EliminarPromocionServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditarPromocionServlet</servlet-name>
+        <url-pattern>/EditarPromocionServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CrearPromocionServlet</servlet-name>
+        <url-pattern>/CrearPromocionServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

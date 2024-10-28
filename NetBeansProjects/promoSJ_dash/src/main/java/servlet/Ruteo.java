@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,8 @@ import sesiones.PromocionesFacade;
             "/Home",
             "/Perfil",
             "/Promociones",
+            "/CrearPromocion",
+            "/EditarPromocion",
             "/Estadisticas"
         }
 )
@@ -77,6 +80,37 @@ public class Ruteo extends HttpServlet {
                 List<Promociones> promociones = promocionF.findPromocionesByComercio(comercio.getIdComercio());
                 request.setAttribute("promociones", promociones);
                 url = "/vista/promociones.jsp";
+                break;
+
+            case "/CrearPromocion":
+                // Redirigir a la vista para crear una promoción
+                url = "/vista/crearPromocion.jsp";
+                break;
+
+            case "/EditarPromocion":
+                // Redirigir a la vista para editar una promoción específica
+                String idPromocion = request.getParameter("id");
+
+                Promociones promocion = promocionF.find(Integer.valueOf(idPromocion));
+
+                if (idPromocion != null) {
+
+                    // Formato de fecha para enviar al JSP
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+                    // Formatea las fechas de inicio y fin
+                    String fechaInicio = dateFormat.format(promocion.getFechaInicio());
+                    String fechaFin = dateFormat.format(promocion.getFechaFin());
+
+                    request.setAttribute("promocion", promocion);
+                    request.setAttribute("fechaInicio", fechaInicio);
+                    request.setAttribute("fechaFin", fechaFin);
+                    url = "/vista/editarPromocion.jsp";
+
+                } else {
+                    // Si no se proporciona un ID válido, redirigir a una página de error
+                    url = "/vista/error.jsp";
+                }
                 break;
 
             case "/Estadisticas":
