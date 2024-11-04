@@ -35,6 +35,10 @@
         <servlet-name>CrearPromocionServlet</servlet-name>
         <servlet-class>servlet.CrearPromocionServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EstadisticaServlet</servlet-name>
+        <servlet-class>servlet.EstadisticaServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -66,6 +70,10 @@
     <servlet-mapping>
         <servlet-name>CrearPromocionServlet</servlet-name>
         <url-pattern>/CrearPromocionServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EstadisticaServlet</servlet-name>
+        <url-pattern>/EstadisticaServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -29,6 +29,16 @@
                         <h3>Estadísticas</h3>
                     </div>
 
+                    <!-- Mostrar el gráfico generado en el servlet -->
+                    <div class="pb-5">
+
+                        <img style="padding-left: 30px" src="<%= request.getContextPath()%>/BarChartServlet?tipoGrafico=totalCanjesPorPromocion" alt="Total de Canjes por Promoción" />
+                        <img style="padding-left: 30px" src="<%= request.getContextPath()%>/BarChartServlet?tipoGrafico=canjesPorEstado" alt="Canjes por Estado" />
+                        <img style="padding: 30px 0 0 30px" src="<%= request.getContextPath()%>/BarChartServlet?tipoGrafico=rankingPromociones" alt="Ranking de Promociones por Canjes" />
+                        <img style="padding: 30px 0 0 30px" src="<%= request.getContextPath()%>/BarChartServlet?tipoGrafico=canjesPorFecha" alt="Gráfico de Canjes por Fecha" />
+
+                    </div>
+
                 </main>
             </div>
         </div>
