@@ -51,7 +51,8 @@ public class CrearPromocionServlet extends HttpServlet {
             String descripcion = request.getParameter("descripcion");
             String fechaInicioStr = request.getParameter("fechaInicio");
             String fechaFinStr = request.getParameter("fechaFin");
-            String estado = request.getParameter("estado");
+            String estadoStr  = request.getParameter("estado");
+            boolean estado = "1".equals(estadoStr);
 
             try {
                 // Convierte las fechas de inicio y fin de String a Date

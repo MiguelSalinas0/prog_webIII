@@ -67,3 +67,10 @@ body {
 .welcome-header {
     padding: 15px;
 }
+/*GRAFICOS*/
+.grafico {
+    padding-left: 25px;
+    padding-top: 25px;
+    max-width: 100%;
+    height: auto;
+}

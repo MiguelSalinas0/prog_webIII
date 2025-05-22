@@ -51,7 +51,8 @@ public class EditarPromocionServlet extends HttpServlet {
                 String idPromocion = request.getParameter("idPromocion");
                 String titulo = request.getParameter("titulo");
                 String descripcion = request.getParameter("descripcion");
-                String estado = request.getParameter("estado");
+                //String estado = request.getParameter("estado");
+                boolean estado = "1".equals(request.getParameter("estado"));
 
                 // Convertir los parámetros de fecha a java.sql.Date
                 Date fechaInicio = Date.valueOf(request.getParameter("fechaInicio"));

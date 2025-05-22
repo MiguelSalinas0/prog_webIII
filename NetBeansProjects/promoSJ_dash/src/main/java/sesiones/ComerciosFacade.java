@@ -28,17 +28,29 @@ public class ComerciosFacade extends AbstractFacade<Comercios> {
     public ComerciosFacade() {
         super(Comercios.class);
     }
-    
+
     // Método para iniciar sesión (buscar comercio por email y password)
+//    public Comercios login(String email, String password) {
+//        try {
+//            return em.createQuery("SELECT c FROM Comercios c WHERE c.email = :email AND c.password = :password", Comercios.class)
+//                    .setParameter("email", email)
+//                    .setParameter("password", password)
+//                    .getSingleResult();
+//        } catch (NoResultException e) {
+//            return null;  // Si no hay coincidencias, retornamos null
+//        }
+//    }
     public Comercios login(String email, String password) {
         try {
-            return em.createQuery("SELECT c FROM Comercios c WHERE c.email = :email AND c.password = :password", Comercios.class)
+            return em.createQuery(
+                    "SELECT c FROM Comercios c WHERE c.idUsuario.email = :email AND c.idUsuario.password = :password",
+                    Comercios.class)
                     .setParameter("email", email)
                     .setParameter("password", password)
                     .getSingleResult();
         } catch (NoResultException e) {
-            return null;  // Si no hay coincidencias, retornamos null
+            return null;
         }
     }
-    
+
 }

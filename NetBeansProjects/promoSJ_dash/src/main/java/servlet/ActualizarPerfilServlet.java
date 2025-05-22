@@ -5,6 +5,7 @@
 package servlet;
 
 import entidades.Comercios;
+import entidades.Usuarios;
 import jakarta.ejb.EJB;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import sesiones.ComerciosFacade;
+import sesiones.UsuariosFacade;
 
 /**
  *
@@ -23,6 +25,9 @@ public class ActualizarPerfilServlet extends HttpServlet {
 
     @EJB
     private ComerciosFacade comercioFacade;
+    
+    @EJB
+    private UsuariosFacade usuariosFacade;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -54,13 +59,19 @@ public class ActualizarPerfilServlet extends HttpServlet {
                 comercio.setNombre(nombre);
                 comercio.setDireccion(direccion);
                 comercio.setTelefono(telefono);
-                comercio.setEmail(email);
                 comercio.setDescripcion(descripcion);
                 comercio.setHorarios(horarios);
-                comercio.setPassword(password);
+
+                // Obtener el usuario asociado al comercio
+                Usuarios usuario = comercio.getIdUsuario();
+
+                // Actualizar los datos del usuario
+                usuario.setEmail(email);
+                usuario.setPassword(password);
 
                 // Guardar los cambios en la base de datos
                 comercioFacade.edit(comercio);
+                usuariosFacade.edit(usuario); // Asegúrate de tener un facade o repositorio para Usuarios
 
                 // Establecer un mensaje de éxito en la sesión
                 request.getSession().setAttribute("mensaje", "Los datos se han actualizado correctamente.");

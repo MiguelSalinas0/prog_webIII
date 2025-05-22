@@ -5,6 +5,7 @@
 package entidades;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,15 +41,10 @@ import java.util.Date;
     @NamedQuery(name = "Usuarios.findByEmail", query = "SELECT u FROM Usuarios u WHERE u.email = :email"),
     @NamedQuery(name = "Usuarios.findByPassword", query = "SELECT u FROM Usuarios u WHERE u.password = :password"),
     @NamedQuery(name = "Usuarios.findByTelefono", query = "SELECT u FROM Usuarios u WHERE u.telefono = :telefono"),
-    @NamedQuery(name = "Usuarios.findByFechaRegistro", query = "SELECT u FROM Usuarios u WHERE u.fechaRegistro = :fechaRegistro")})
+    @NamedQuery(name = "Usuarios.findByFechaRegistro", query = "SELECT u FROM Usuarios u WHERE u.fechaRegistro = :fechaRegistro"),
+    @NamedQuery(name = "Usuarios.findByRole", query = "SELECT u FROM Usuarios u WHERE u.role = :role")})
 public class Usuarios implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_usuario", nullable = false)
-    private Integer idUsuario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -56,7 +52,7 @@ public class Usuarios implements Serializable {
     private String nombre;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Size(min = 1, max = 100)
     @Column(name = "email", nullable = false, length = 100)
     private String email;
@@ -65,6 +61,7 @@ public class Usuarios implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "password", nullable = false, length = 100)
     private String password;
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 20)
     @Column(name = "telefono", length = 20)
     private String telefono;
@@ -73,8 +70,21 @@ public class Usuarios implements Serializable {
     @Column(name = "fecha_registro", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
+    @Basic(optional = false)
+    @NotNull()
+    @Size(min = 1, max = 50)
+    @Column(name = "role", nullable = false, length = 50)
+    private String role;
     @OneToMany(mappedBy = "idUsuario")
     private Collection<Canjes> canjesCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUsuario")
+    private Collection<Comercios> comerciosCollection;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_usuario", nullable = false)
+    private Integer idUsuario;
 
     public Usuarios() {
     }
@@ -83,12 +93,13 @@ public class Usuarios implements Serializable {
         this.idUsuario = idUsuario;
     }
 
-    public Usuarios(Integer idUsuario, String nombre, String email, String password, Date fechaRegistro) {
+    public Usuarios(Integer idUsuario, String nombre, String email, String password, Date fechaRegistro, String role) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.email = email;
         this.password = password;
         this.fechaRegistro = fechaRegistro;
+        this.role = role;
     }
 
     public Integer getIdUsuario() {
@@ -97,6 +108,41 @@ public class Usuarios implements Serializable {
 
     public void setIdUsuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+
+    public Date getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(Date fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
+    }
+
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (idUsuario != null ? idUsuario.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Usuarios)) {
+            return false;
+        }
+        Usuarios other = (Usuarios) object;
+        if ((this.idUsuario == null && other.idUsuario != null) || (this.idUsuario != null && !this.idUsuario.equals(other.idUsuario))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "entidades.Usuarios[ idUsuario=" + idUsuario + " ]";
     }
 
     public String getNombre() {
@@ -131,12 +177,12 @@ public class Usuarios implements Serializable {
         this.telefono = telefono;
     }
 
-    public Date getFechaRegistro() {
-        return fechaRegistro;
+    public String getRole() {
+        return role;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @XmlTransient
@@ -148,29 +194,13 @@ public class Usuarios implements Serializable {
         this.canjesCollection = canjesCollection;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (idUsuario != null ? idUsuario.hashCode() : 0);
-        return hash;
+    @XmlTransient
+    public Collection<Comercios> getComerciosCollection() {
+        return comerciosCollection;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Usuarios)) {
-            return false;
-        }
-        Usuarios other = (Usuarios) object;
-        if ((this.idUsuario == null && other.idUsuario != null) || (this.idUsuario != null && !this.idUsuario.equals(other.idUsuario))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entidades.Usuarios[ idUsuario=" + idUsuario + " ]";
+    public void setComerciosCollection(Collection<Comercios> comerciosCollection) {
+        this.comerciosCollection = comerciosCollection;
     }
     
 }

@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.GradientPaint;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -21,15 +23,21 @@ import java.util.List;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+import org.jfree.chart.labels.StandardXYItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.Month;
@@ -87,7 +95,6 @@ public class EstadisticaServlet extends HttpServlet {
     public void generarGraficoTotalCanjesPorPromocion(HttpServletResponse response, Integer idComercio) throws IOException {
         List<Object[]> estadisticas = estadisticasF.obtenerTotalDeCanjesPorPromocion(idComercio);
 
-        // Crear el dataset
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (Object[] fila : estadisticas) {
             String titulo = (String) fila[1];
@@ -98,7 +105,6 @@ public class EstadisticaServlet extends HttpServlet {
             dataset.addValue(visitas, "Visitas", titulo);
         }
 
-        // Crear el gráfico
         JFreeChart barChart = ChartFactory.createBarChart(
                 "Total de Canjes y Visitas por Promoción",
                 "Promoción",
@@ -107,67 +113,108 @@ public class EstadisticaServlet extends HttpServlet {
                 PlotOrientation.VERTICAL,
                 true, true, false);
 
-        // Personalizar colores y estilos
+        // Estética del gráfico
+        barChart.setBorderVisible(false);
+        barChart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 16));
+
         CategoryPlot plot = barChart.getCategoryPlot();
         plot.setBackgroundPaint(Color.WHITE);
         plot.setRangeGridlinePaint(Color.GRAY);
+        plot.setOutlineVisible(false);
 
-        // Cambiar los colores de las barras
+        // Eje X: etiquetas rotadas y fuente mejorada
+        CategoryAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setCategoryLabelPositions(
+                CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 4.0)
+        );
+        domainAxis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 11));
+        domainAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 12));
+
+        // Eje Y: fuente también
+        plot.getRangeAxis().setLabelFont(new Font("SansSerif", Font.BOLD, 12));
+
+        // Renderer y colores
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        renderer.setSeriesPaint(0, new Color(79, 129, 189)); // Color para "Canjes"
-        renderer.setSeriesPaint(1, new Color(192, 80, 77));  // Color para "Visitas"
+        renderer.setSeriesPaint(0, new Color(79, 129, 189)); // Canjes
+        renderer.setSeriesPaint(1, new Color(192, 80, 77));  // Visitas
 
-        // Mostrar los valores en las barras
+        // Etiquetas sobre las barras (más legibles)
         renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
         renderer.setDefaultItemLabelsVisible(true);
+        renderer.setDefaultPositiveItemLabelPosition(
+                new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_CENTER)
+        );
 
-        // Cambiar el tamaño de la imagen
+        // Generar imagen
         response.setContentType("image/png");
         try (OutputStream out = response.getOutputStream()) {
-            ChartUtils.writeChartAsPNG(out, barChart, 600, 400); // Tamaño ajustado a 600x400
+            ChartUtils.writeChartAsPNG(out, barChart, 700, 450); // tamaño levemente más grande
         }
     }
 
     private void generarGraficoCanjesPorEstado(HttpServletResponse response, Integer idComercio) throws IOException {
         List<Object[]> canjesPorEstado = estadisticasF.obtenerCanjesPorEstado(idComercio);
 
-        // Crear el dataset para el gráfico de pastel
+        // Dataset para gráfico de pastel
         DefaultPieDataset dataset = new DefaultPieDataset();
-
-        // Llenar el dataset con los datos de la consulta
         for (Object[] fila : canjesPorEstado) {
             String estado = (String) fila[0];
             Long total = ((Number) fila[1]).longValue();
             dataset.setValue(estado, total);
         }
 
-        // Crear el gráfico de pastel
         JFreeChart pieChart = ChartFactory.createPieChart(
-                "Canjes por Estado",
+                "Distribución de Canjes por Estado",
                 dataset,
                 true, // leyenda
                 true, // tooltips
                 false // URLs
         );
 
-        // Personalizar colores del gráfico de pastel
-        PiePlot plot = (PiePlot) pieChart.getPlot();
-        plot.setSectionPaint("completado", new Color(67, 160, 71)); // Verde
-        plot.setSectionPaint("pendiente", new Color(255, 193, 7));  // Amarillo
-        plot.setSectionPaint("cancelado", new Color(229, 57, 53));  // Rojo
+        // Estética del gráfico
+        pieChart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        // Mostrar los valores como porcentaje y agregar formato de número
-        plot.setLabelGenerator(new StandardPieSectionLabelGenerator(
-                "{0}: {1} ({2})", NumberFormat.getNumberInstance(), NumberFormat.getPercentInstance()
-        ));
+        PiePlot plot = (PiePlot) pieChart.getPlot();
         plot.setBackgroundPaint(Color.WHITE);
         plot.setLabelBackgroundPaint(Color.WHITE);
         plot.setLabelOutlinePaint(Color.GRAY);
+        plot.setOutlineVisible(false);
 
-        //Configurar el tipo de contenido para imagen PNG
+        // Colores personalizados por estado
+        plot.setSectionPaint("completado", new Color(67, 160, 71));  // Verde
+        plot.setSectionPaint("pendiente", new Color(255, 193, 7));   // Amarillo
+        plot.setSectionPaint("expirado", new Color(229, 57, 53));    // Rojo
+
+        // Etiquetas con número y porcentaje
+        plot.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+        plot.setLabelGenerator(new StandardPieSectionLabelGenerator(
+                "{0}: {1} canjes ({2})",
+                NumberFormat.getIntegerInstance(),
+                NumberFormat.getPercentInstance()
+        ));
+
+        // Borde alrededor de cada sección
+        for (var key : dataset.getKeys()) {
+            plot.setSectionOutlinePaint((Comparable) key, Color.DARK_GRAY);
+            plot.setSectionOutlineStroke((Comparable) key, new BasicStroke(1.0f));
+        }
+        plot.setSectionOutlinesVisible(true);
+
+        // Explosión de sectores (resaltar secciones grandes)
+        for (Object keyObj : dataset.getKeys()) {
+            Comparable<?> key = (Comparable<?>) keyObj;
+            plot.setSectionOutlinePaint(key, Color.DARK_GRAY);
+            plot.setSectionOutlineStroke(key, new BasicStroke(1.0f));
+        }
+        plot.setSectionOutlinesVisible(true);
+
+        // Mejorar la leyenda
+        pieChart.getLegend().setItemFont(new Font("SansSerif", Font.PLAIN, 11));
+
+        // Exportar imagen
         response.setContentType("image/png");
         try (OutputStream out = response.getOutputStream()) {
-            ChartUtils.writeChartAsPNG(out, pieChart, 600, 400);
+            ChartUtils.writeChartAsPNG(out, pieChart, 600, 450);
         }
     }
 
@@ -193,71 +240,105 @@ public class EstadisticaServlet extends HttpServlet {
 
         // Personalizar colores y estilos
         CategoryPlot plot = barChart.getCategoryPlot();
+        CategoryAxis domainAxis = plot.getDomainAxis();
+
+        // Rotar etiquetas del eje X
+        domainAxis.setCategoryLabelPositions(
+                CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 4.0)
+        );
+        domainAxis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 11));
+        domainAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 12));
+
         plot.setBackgroundPaint(Color.WHITE);
         plot.setRangeGridlinePaint(Color.GRAY);
+        plot.setOutlineVisible(false);
 
-        // Mostrar los valores en las barras
+        // Personalizar renderer
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
         renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
         renderer.setDefaultItemLabelsVisible(true);
 
+        // Colorear barras con degradado (más atractivo visualmente)
+        GradientPaint gp = new GradientPaint(0.0f, 0.0f, new Color(93, 173, 226),
+                0.0f, 0.0f, new Color(40, 116, 166));
+        renderer.setSeriesPaint(0, gp);
+
+        // Añadir bordes a las barras
+        renderer.setDrawBarOutline(true);
+        renderer.setDefaultOutlinePaint(Color.DARK_GRAY);
+        renderer.setDefaultOutlineStroke(new BasicStroke(0.8f));
+
+        // Título personalizado
+        barChart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 16));
+        barChart.setBorderVisible(false);
+
         // Configurar el tipo de contenido para imagen PNG
         response.setContentType("image/png");
         try (OutputStream out = response.getOutputStream()) {
-            ChartUtils.writeChartAsPNG(out, barChart, 600, 400); // Tamaño ajustado a 600x400
+            ChartUtils.writeChartAsPNG(out, barChart, 600, 450);
         }
     }
 
     private void generarGraficoCanjesPorFecha(HttpServletResponse response, Integer idComercio) throws IOException {
         List<Object[]> canjesPorFecha = estadisticasF.obtenerPorFecha(idComercio);
 
-        // Crear el dataset para el gráfico de líneas
         TimeSeries series = new TimeSeries("Canjes Efectivos");
 
-        // Llenar el dataset con los datos de la consulta
         for (Object[] fila : canjesPorFecha) {
             int anio = ((Number) fila[0]).intValue();
             int mes = ((Number) fila[1]).intValue();
             long totalCanjes = ((Number) fila[2]).longValue();
 
-            // Agregar el dato a la serie con año y mes
             series.add(new Month(mes, anio), totalCanjes);
         }
 
         TimeSeriesCollection dataset = new TimeSeriesCollection();
         dataset.addSeries(series);
 
-        // Crear el gráfico de líneas
         JFreeChart lineChart = ChartFactory.createTimeSeriesChart(
                 "Canjes Efectivos por Mes",
                 "Fecha",
                 "Total de Canjes",
                 dataset,
-                true, // leyenda
-                true, // tooltips
-                false // URLs
+                true, true, false
         );
 
-        // Personalizar el gráfico
         XYPlot plot = lineChart.getXYPlot();
         plot.setBackgroundPaint(Color.WHITE);
-        plot.setDomainGridlinePaint(Color.GRAY);
-        plot.setRangeGridlinePaint(Color.GRAY);
+        plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
+        plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
+        plot.setOutlineVisible(false);
 
-        // Configurar el formato de la fecha en el eje X (eje temporal)
+        // Formato de eje de fechas
         DateAxis axis = (DateAxis) plot.getDomainAxis();
-        axis.setDateFormatOverride(new SimpleDateFormat("MMM-yyyy"));  // Mostrar mes y año
+        axis.setDateFormatOverride(new SimpleDateFormat("MMM-yyyy"));
+        axis.setVerticalTickLabels(true);  // Mejora la legibilidad en espacios pequeños
 
-        // Personalizar el color de la línea
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        renderer.setSeriesPaint(0, new Color(79, 129, 189)); // Azul personalizado
-        renderer.setSeriesStroke(0, new BasicStroke(2.0f));
+        axis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 11));
+        axis.setLabelFont(new Font("SansSerif", Font.BOLD, 12));
+
+        // Personalizar líneas y puntos
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, true);
+        renderer.setSeriesPaint(0, new Color(40, 116, 166)); // Azul
+        renderer.setSeriesStroke(0, new BasicStroke(2.5f));
+        renderer.setSeriesShapesVisible(0, true);
+        renderer.setSeriesShape(0, new java.awt.geom.Ellipse2D.Double(-3.0, -3.0, 6.0, 6.0)); // Puntos redondos
+
         plot.setRenderer(renderer);
 
-        // Escribir el gráfico en el flujo de salida
+        // Personalizar el título
+        lineChart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        // Agregar número de canjes sobre los puntos
+        renderer.setDefaultItemLabelsVisible(true);
+        renderer.setDefaultItemLabelGenerator(new StandardXYItemLabelGenerator());
+        renderer.setDefaultItemLabelFont(new Font("SansSerif", Font.PLAIN, 10));
+        renderer.setDefaultItemLabelPaint(Color.DARK_GRAY);
+
+        // Exportar como imagen PNG
         response.setContentType("image/png");
         try (OutputStream out = response.getOutputStream()) {
-            ChartUtils.writeChartAsPNG(out, lineChart, 600, 400);
+            ChartUtils.writeChartAsPNG(out, lineChart, 700, 450); // Tamaño levemente ampliado
         }
     }
 

@@ -58,9 +58,8 @@ public class Promociones implements Serializable {
     @Size(max = 255)
     @Column(name = "imagen", length = 255)
     private String imagen;
-    @Size(max = 20)
-    @Column(name = "estado", length = 20)
-    private String estado;
+    @Column(name = "estado")
+    private Boolean estado;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -172,6 +171,15 @@ public class Promociones implements Serializable {
         return "entidades.Promociones[ idPromocion=" + idPromocion + " ]";
     }
 
+
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
     public String getTitulo() {
         return titulo;
     }
@@ -194,14 +202,6 @@ public class Promociones implements Serializable {
 
     public void setImagen(String imagen) {
         this.imagen = imagen;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
     }
     
 }

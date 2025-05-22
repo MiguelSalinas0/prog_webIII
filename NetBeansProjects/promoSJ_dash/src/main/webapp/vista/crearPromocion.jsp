@@ -49,8 +49,8 @@
                             <div class="mb-3">
                                 <label for="estado" class="form-label">Estado</label>
                                 <select class="form-select" id="estado" name="estado" required>
-                                    <option value="activa">Activa</option>
-                                    <option value="inactiva">Inactiva</option>
+                                    <option value="1">Activa</option>
+                                    <option value="0">Inactiva</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary">Crear Promoción</button>

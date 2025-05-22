@@ -52,10 +52,11 @@
                             <div class="mb-3">
                                 <label for="estado" class="form-label">Estado</label>
                                 <select class="form-select" id="estado" name="estado" required>
-                                    <option value="activa" ${promocion.estado == 'activa' ? 'selected' : ''}>Activa</option>
-                                    <option value="inactiva" ${promocion.estado == 'inactiva' ? 'selected' : ''}>Inactiva</option>
+                                    <option value="1" ${promocion.estado ? 'selected' : ''}>Activa</option>
+                                    <option value="0" ${!promocion.estado ? 'selected' : ''}>Inactiva</option>
                                 </select>
                             </div>
+                                
                             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                             <a href="Promociones" class="btn btn-secondary">Cancelar</a>
                         </form>
